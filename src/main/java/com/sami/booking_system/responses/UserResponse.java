@@ -17,6 +17,9 @@ public class UserResponse implements Serializable {
     private String email;
 
     public static UserResponse select(User user) {
+        if (user == null) {
+            return null;
+        }
         UserResponse response = new UserResponse();
         response.setId(user.getId());
         response.setUsername(user.getUsername());

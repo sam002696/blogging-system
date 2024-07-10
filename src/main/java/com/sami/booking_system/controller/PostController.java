@@ -22,6 +22,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 import static com.sami.booking_system.exceptions.ApiError.fieldError;
 import static com.sami.booking_system.responses.PostResponse.select;
 import static com.sami.booking_system.utils.ResponseBuilder.error;
@@ -44,7 +46,7 @@ public class PostController {
     private PostValidator postValidator;
 
 
-    @PostMapping("/add/{userId}")
+    @PostMapping("/add")
     @Operation(summary = "Add a post", responses = {
             @ApiResponse(description = "Successful added a post",
                     responseCode = "200",
@@ -52,15 +54,14 @@ public class PostController {
                             schema = @Schema(implementation = PostRequest.class)))
     })
     public ResponseEntity<JSONObject> addNewPost(
-            @PathVariable Long userId,
             @Valid @RequestBody PostRequest postRequest,
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            return badRequest().body(error(fieldError(bindingResult)).getJson());
+            return badRequest().body(error(fieldError(bindingResult), "Validation Error").getJson());
         }
 
-        Post post = postService.addPost(userId, postRequest);
+        Post post = postService.addPost(postRequest);
 
         return ok(success(post, "Post added successfully").getJson());
     }
@@ -87,21 +88,27 @@ public class PostController {
 
 
     @GetMapping("{postId}")
-    public ResponseEntity<Response> getPostById(@PathVariable Long postId) {
-        Response response = postService.getPostById(postId);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
+//    public ResponseEntity<Response> getPostById(@PathVariable Long postId) {
+//        Response response = postService.getPostById(postId);
+//        return ResponseEntity.status(response.getStatusCode()).body(response);
+//    }
+    public ResponseEntity<JSONObject> getPostById(@PathVariable Long postId) {
+        Optional<Post> postOptional = postService.findById(postId);
+
+
+        return postOptional.map(value -> ok(success(select(value)).getJson())).orElseGet(() ->
+                badRequest().body(error(HttpStatus.NOT_FOUND, "Post not found with id: " + postId).getJson()));
+
     }
 
 
 
     @PutMapping("/update/{postId}")
-    public ResponseEntity<Response> updatePost(@PathVariable Long postId,
-                                               @RequestParam(value = "title", required = false) String title,
-                                               @RequestParam(value = "content", required = false) String content
-
+    public ResponseEntity<JSONObject> updatePost(@PathVariable Long postId,@RequestBody PostRequest postRequest
     ) {
-        Response response = postService.updatePost(postId, title, content);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
+        Optional<Post> postOptional = postService.updatePost(postId, postRequest);
+        return postOptional.map(value -> ok(success(select(value)).getJson())).orElseGet(() ->
+                badRequest().body(error(HttpStatus.NOT_FOUND, "Post not found with id: " + postId).getJson()));
     }
 
     @DeleteMapping("/delete/{roomId}")

@@ -5,9 +5,11 @@ import com.sami.booking_system.dto.PostRequest;
 import com.sami.booking_system.dto.Response;
 import com.sami.booking_system.entity.Post;
 
+import java.util.Optional;
+
 
 public interface IPostService {
-    Post addPost(Long userId, PostRequest postRequest);
+    Post addPost( PostRequest postRequest);
 
     Response addNewPost(String title, String content);
 
@@ -15,8 +17,8 @@ public interface IPostService {
 
     Response deletePost(Long postId);
 
-    Response updatePost(Long postId, String title, String content);
+    Optional<Post> updatePost(Long postId, PostRequest postRequest);
 
-    Response getPostById(Long PostId);
+    Optional<Post> findById(Long postId);
 
 }

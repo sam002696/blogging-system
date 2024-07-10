@@ -39,7 +39,6 @@ public class User implements UserDetails {
 
 
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
 
 

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,12 +22,19 @@ public class PostResponse implements Serializable {
     private List<CommentResponse> comments;
 
     public static PostResponse select(Post post) {
+        if (post == null) {
+            return null;
+        }
         PostResponse response = new PostResponse();
         response.setId(post.getId());
         response.setTitle(post.getTitle());
         response.setContent(post.getContent());
-        response.setAuthor(UserResponse.select(post.getAuthor())); // Assuming UserResponse has a similar select method
-        response.setComments(post.getComments().stream().map(CommentResponse::select).collect(Collectors.toList()));
+        response.setAuthor(UserResponse.select(post.getAuthor()));
+        if (post.getComments() != null) {
+            response.setComments(post.getComments().stream().map(CommentResponse::select).collect(Collectors.toList()));
+        } else {
+            response.setComments(Collections.emptyList());
+        }
         return response;
     }
 }
