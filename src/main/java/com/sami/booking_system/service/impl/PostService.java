@@ -1,11 +1,14 @@
 package com.sami.booking_system.service.impl;
 
 import com.sami.booking_system.dto.PostDTO;
+import com.sami.booking_system.dto.PostRequest;
 import com.sami.booking_system.dto.Response;
 import com.sami.booking_system.entity.Post;
+import com.sami.booking_system.entity.User;
 import com.sami.booking_system.exception.OurException;
 import com.sami.booking_system.repository.CommentRepository;
 import com.sami.booking_system.repository.PostRepository;
+import com.sami.booking_system.repository.UserRepository;
 import com.sami.booking_system.service.interfaces.IPostService;
 import com.sami.booking_system.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,9 @@ public class PostService implements IPostService {
     private PostRepository postRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private UserRepository userRepository;
+
 
 
 
@@ -44,6 +50,24 @@ public class PostService implements IPostService {
         }
         return response;
     }
+
+
+    @Override
+    public Post addPost(Long userId, PostRequest postRequest) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Post post = new Post();
+        post.setTitle(postRequest.getTitle());
+        post.setContent(postRequest.getContent());
+        post.setAuthor(user);
+
+        return postRepository.save(post);
+    }
+
+//    @Override
+//    public Post addNewPost(PostDTO dto) {
+//        Post post = dto.to();
+//        return postRepository.save(post);
+//    }
 
     @Override
     public Response getAllPosts() {

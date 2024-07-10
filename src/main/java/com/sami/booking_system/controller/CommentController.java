@@ -1,9 +1,15 @@
 package com.sami.booking_system.controller;
 
 
+import com.sami.booking_system.dto.CommentDTO;
 import com.sami.booking_system.dto.Response;
+import com.sami.booking_system.dto.UserDTO;
 import com.sami.booking_system.service.interfaces.ICommentService;
 import com.sami.booking_system.service.interfaces.ICommentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,6 +29,12 @@ public class CommentController {
 
 
     @PostMapping("/add/{postId}/{userId}")
+    @Operation(summary = "Add a comment to a post", responses = {
+            @ApiResponse(description = "Successful added the comment",
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CommentDTO.class)))
+    })
     public ResponseEntity<Response> addNewComment(
             @PathVariable Long userId,
             @PathVariable Long postId,

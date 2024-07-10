@@ -29,7 +29,7 @@ public class Utils {
                     .collect(Collectors.toList()));
         }
         else {
-            userDTO.setPosts(null); // Explicitly set to null
+            userDTO.setPosts(null);
         }
         return userDTO;
     }
