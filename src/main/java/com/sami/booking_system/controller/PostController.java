@@ -5,8 +5,11 @@ import com.sami.booking_system.dto.PostDTO;
 import com.sami.booking_system.dto.PostRequest;
 import com.sami.booking_system.dto.Response;
 import com.sami.booking_system.entity.Post;
+import com.sami.booking_system.helpers.CommonDataHelper;
+import com.sami.booking_system.responses.PostResponse;
 import com.sami.booking_system.service.interfaces.ICommentService;
 import com.sami.booking_system.service.interfaces.IPostService;
+import com.sami.booking_system.utils.PaginatedResponse;
 import com.sami.booking_system.validators.PostValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,12 +25,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.sami.booking_system.exceptions.ApiError.fieldError;
 import static com.sami.booking_system.responses.PostResponse.select;
-import static com.sami.booking_system.utils.ResponseBuilder.error;
-import static com.sami.booking_system.utils.ResponseBuilder.success;
+import static com.sami.booking_system.utils.ResponseBuilder.*;
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -44,6 +48,8 @@ public class PostController {
     private ICommentService commentService;
     @Autowired
     private PostValidator postValidator;
+    @Autowired
+    private CommonDataHelper commonDataHelper;
 
 
     @PostMapping("/add")
@@ -79,10 +85,29 @@ public class PostController {
 //        return ResponseEntity.status(response.getStatusCode()).body(response);
 //    }
 
-    @GetMapping("/all")
-    public ResponseEntity<Response> getAllPosts() {
-        Response response = postService.getAllPosts();
-        return ResponseEntity.status(response.getStatusCode()).body(response);
+//    @GetMapping("/all")
+//    public ResponseEntity<Response> getAllPosts() {
+//        Response response = postService.getAllPosts();
+//        return ResponseEntity.status(response.getStatusCode()).body(response);
+//    }
+
+    @GetMapping("/list")
+    @Operation(summary = "show lists of all posts", description = "show lists of all post")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponse.class))
+    })
+    public ResponseEntity<JSONObject> lists(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                            @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                            @RequestParam(value = "sortBy", defaultValue = "") String sortBy,
+                                            @RequestParam(value = "search", defaultValue = "") String search
+    ) {
+
+        PaginatedResponse response = new PaginatedResponse();
+        Map<String, Object> map = postService.search(page, size, sortBy, search);
+        List<Post> postList = (List<Post>) map.get("lists");
+        List<PostResponse> responses = postList.stream().map(PostResponse::select).toList();
+        commonDataHelper.getCommonData(page, size, map, response, responses);
+        return ok(paginatedSuccess(response).getJson());
     }
 
 

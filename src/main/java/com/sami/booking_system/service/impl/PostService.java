@@ -11,12 +11,14 @@ import com.sami.booking_system.repository.CommentRepository;
 import com.sami.booking_system.repository.PostRepository;
 import com.sami.booking_system.repository.UserRepository;
 import com.sami.booking_system.service.interfaces.IPostService;
+import com.sami.booking_system.utils.ServiceHelper;
 import com.sami.booking_system.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -170,5 +172,13 @@ public class PostService implements IPostService {
     @Override
     public Optional<Post> findById(Long postId) {
         return postRepository.findById(postId);
+    }
+
+    @Override
+    public Map<String, Object> search(Integer page, Integer size, String sortBy, String search) {
+        ServiceHelper<Post> serviceHelper = new ServiceHelper<>(Post.class);
+        return serviceHelper.getList(
+                postRepository.search(search, serviceHelper.getPageable(sortBy, page, size)),
+                page, size);
     }
 }
