@@ -1,11 +1,12 @@
 package com.sami.booking_system.service.interfaces;
 
 import com.sami.booking_system.dto.LoginRequest;
+import com.sami.booking_system.dto.RegisterRequest;
 import com.sami.booking_system.dto.Response;
 import com.sami.booking_system.entity.User;
 
 public interface IUserService {
-    Response register(User user);
+    User register(RegisterRequest user);
 
     Response login(LoginRequest loginRequest);
 

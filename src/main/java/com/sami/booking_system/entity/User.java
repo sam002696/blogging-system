@@ -18,8 +18,9 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "Email is required")
@@ -39,7 +40,8 @@ public class User implements UserDetails {
 
 
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Post> posts = new ArrayList<>();
+    @JsonManagedReference
+    private List<Post> posts;
 
 
     @Override

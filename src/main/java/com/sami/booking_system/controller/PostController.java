@@ -38,7 +38,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @Tag(name = "Posts API")
-@RequestMapping("/posts")
+@RequestMapping("/api/v1/post")
 public class PostController {
 
 
@@ -52,14 +52,15 @@ public class PostController {
     private CommonDataHelper commonDataHelper;
 
 
-    @PostMapping("/add")
+    @PostMapping("/add/{userId}")
     @Operation(summary = "Add a post", responses = {
-            @ApiResponse(description = "Successful added a post",
+            @ApiResponse(description = "Successfully added a post",
                     responseCode = "200",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PostRequest.class)))
     })
     public ResponseEntity<JSONObject> addNewPost(
+            @PathVariable Long userId,
             @Valid @RequestBody PostRequest postRequest,
             BindingResult bindingResult
     ) {
@@ -67,7 +68,7 @@ public class PostController {
             return badRequest().body(error(fieldError(bindingResult), "Validation Error").getJson());
         }
 
-        Post post = postService.addPost(postRequest);
+        Post post = postService.addPost(postRequest, userId);
 
         return ok(success(post, "Post added successfully").getJson());
     }
@@ -113,6 +114,10 @@ public class PostController {
 
 
     @GetMapping("{postId}")
+    @Operation(summary = "Get a post", description = "Get a post by it's id")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponse.class))
+    })
 //    public ResponseEntity<Response> getPostById(@PathVariable Long postId) {
 //        Response response = postService.getPostById(postId);
 //        return ResponseEntity.status(response.getStatusCode()).body(response);
@@ -129,6 +134,12 @@ public class PostController {
 
 
     @PutMapping("/update/{postId}")
+    @Operation(summary = "Update a post", responses = {
+            @ApiResponse(description = "Successfully updated the post",
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PostRequest.class)))
+    })
     public ResponseEntity<JSONObject> updatePost(@PathVariable Long postId,@RequestBody PostRequest postRequest
     ) {
         Optional<Post> postOptional = postService.updatePost(postId, postRequest);
@@ -137,6 +148,12 @@ public class PostController {
     }
 
     @DeleteMapping("/delete/{roomId}")
+    @Operation(summary = "Delete a post", responses = {
+            @ApiResponse(description = "Successfully deleted the post",
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json"
+                            ))
+    })
 //    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response> deleteRoom(@PathVariable Long postId) {
         Response response = postService.deletePost(postId);

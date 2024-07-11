@@ -1,6 +1,5 @@
 package com.sami.booking_system.service.interfaces;
 
-import com.sami.booking_system.dto.PostDTO;
 import com.sami.booking_system.dto.PostRequest;
 import com.sami.booking_system.dto.Response;
 import com.sami.booking_system.entity.Post;
@@ -10,7 +9,7 @@ import java.util.Optional;
 
 
 public interface IPostService {
-    Post addPost( PostRequest postRequest);
+    Post addPost(PostRequest postRequest, Long userId);
 
     Response addNewPost(String title, String content);
 

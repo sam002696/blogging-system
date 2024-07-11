@@ -14,7 +14,6 @@ import com.sami.booking_system.service.interfaces.IPostService;
 import com.sami.booking_system.utils.ServiceHelper;
 import com.sami.booking_system.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,12 +56,13 @@ public class PostService implements IPostService {
 
 
     @Override
-    public Post addPost( PostRequest postRequest) {
-//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+    public Post addPost(PostRequest postRequest, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
         Post post = new Post();
         post.setTitle(postRequest.getTitle());
         post.setContent(postRequest.getContent());
-//        post.setAuthor(user);
+        post.setAuthor(user);
 
         return postRepository.save(post);
     }

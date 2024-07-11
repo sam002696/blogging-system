@@ -1,10 +1,12 @@
 package com.sami.booking_system.service.impl;
 
 import com.sami.booking_system.dto.LoginRequest;
+import com.sami.booking_system.dto.RegisterRequest;
 import com.sami.booking_system.dto.Response;
 import com.sami.booking_system.dto.UserDTO;
 import com.sami.booking_system.entity.User;
 import com.sami.booking_system.exception.OurException;
+import com.sami.booking_system.exceptions.CustomMessageException;
 import com.sami.booking_system.repository.UserRepository;
 import com.sami.booking_system.service.interfaces.IUserService;
 import com.sami.booking_system.utils.JWTUtils;
@@ -30,30 +32,51 @@ public class UserService implements IUserService {
     private AuthenticationManager authenticationManager;
 
 
-    @Override
-    public Response register(User user) {
-        Response response = new Response();
-        try {
-            if (user.getRole() == null || user.getRole().isBlank()) {
-                user.setRole("USER");
-            }
-            if (userRepository.existsByEmail(user.getEmail())) {
-                throw new OurException(user.getEmail() + "Already Exists");
-            }
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            User savedUser = userRepository.save(user);
-            UserDTO userDTO = Utils.mapUserEntityToUserDTO(savedUser, true);
-            response.setStatusCode(200);
-            response.setUser(userDTO);
-        } catch (OurException e) {
-            response.setStatusCode(400);
-            response.setMessage(e.getMessage());
-        } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setMessage("Error Occurred During USer Registration " + e.getMessage());
+//    @Override
+//    public Response register(RegisterRequest user) {
+//        Response response = new Response();
+//        try {
+//            if (user.getRole() == null || user.getRole().isBlank()) {
+//                user.setRole("USER");
+//            }
+//            if (userRepository.existsByEmail(user.getEmail())) {
+//                throw new OurException(user.getEmail() + "Already Exists");
+//            }
+//            user.setPassword(passwordEncoder.encode(user.getPassword()));
+//            User savedUser = userRepository.save(user);
+//            UserDTO userDTO = Utils.mapUserEntityToUserDTO(savedUser, true);
+//            response.setStatusCode(200);
+//            response.setUser(userDTO);
+//        } catch (OurException e) {
+//            response.setStatusCode(400);
+//            response.setMessage(e.getMessage());
+//        } catch (Exception e) {
+//            response.setStatusCode(500);
+//            response.setMessage("Error Occurred During USer Registration " + e.getMessage());
+//
+//        }
+//        return response;
+//    }
 
+    @Override
+    public User register(RegisterRequest reqUser) {
+        User user = new User();
+        if (reqUser.getRole() == null) {
+            reqUser.setRole("USER");
         }
-        return response;
+        if (userRepository.existsByEmail(reqUser.getEmail())) {
+                throw new CustomMessageException(reqUser.getEmail() + "Already Exists");
+            }
+        reqUser.setPassword(passwordEncoder.encode(reqUser.getPassword()));
+
+        user.setEmail(reqUser.getEmail());
+        user.setName(reqUser.getName());
+        user.setRole(reqUser.getRole());
+        user.setPassword(reqUser.getPassword());
+        user.setPhoneNumber(reqUser.getPhoneNumber());
+
+        return userRepository.save(user);
+
     }
 
     @Override
