@@ -61,7 +61,7 @@ public class UserService implements IUserService {
     @Override
     public User register(RegisterRequest reqUser) {
         User user = new User();
-        if (reqUser.getRole() == null) {
+        if (reqUser.getRole() == null || reqUser.getRole().isEmpty()) {
             reqUser.setRole("USER");
         }
         if (userRepository.existsByEmail(reqUser.getEmail())) {

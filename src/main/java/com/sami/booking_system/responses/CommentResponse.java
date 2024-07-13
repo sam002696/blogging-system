@@ -25,7 +25,7 @@ public class CommentResponse implements Serializable {
         CommentResponse response = new CommentResponse();
         response.setId(comment.getId());
         response.setContent(comment.getContent());
-        response.setCreatedAt(comment.getCreatedAt());
+//        response.setCreatedAt(comment.getCreatedAt());
         response.setUser(UserResponse.select(comment.getUser()));
         return response;
     }

@@ -1,12 +1,14 @@
 package com.sami.booking_system.service.impl;
 
 import com.sami.booking_system.dto.CommentDTO;
+import com.sami.booking_system.dto.CommentRequest;
 import com.sami.booking_system.dto.PostDTO;
 import com.sami.booking_system.dto.Response;
 import com.sami.booking_system.entity.Comment;
 import com.sami.booking_system.entity.Post;
 import com.sami.booking_system.entity.User;
 import com.sami.booking_system.exception.OurException;
+import com.sami.booking_system.exceptions.CustomMessageException;
 import com.sami.booking_system.repository.CommentRepository;
 import com.sami.booking_system.repository.PostRepository;
 import com.sami.booking_system.repository.UserRepository;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CommentService implements ICommentService {
@@ -32,32 +35,47 @@ public class CommentService implements ICommentService {
 
 
 
+//    @Override
+//    public Response addNewComment(Long postId,Long userId, LocalDateTime createdAt, String content) {
+//        Response response = new Response();
+//
+//        try {
+//            Post post = postRepository.findById(postId)
+//                    .orElseThrow(() -> new OurException("Post not found"));
+//            User user = userRepository.findById(userId)
+//                    .orElseThrow(() -> new OurException("User not found"));
+//            Comment comment = new Comment();
+//            comment.setContent(content);
+//            comment.setCreatedAt(createdAt);
+//            comment.setPost(post);
+//            comment.setUser(user);
+//
+//            Comment savedComment = commentRepository.save(comment);
+//            CommentDTO commentDTO = Utils.mapCommentEntityToCommentDTO(savedComment, false, true);
+//            response.setStatusCode(200);
+//            response.setMessage("successful");
+//            response.setComment(commentDTO);
+//
+//        } catch (Exception e) {
+//            response.setStatusCode(500);
+//            response.setMessage("Error saving a comment " + e.getMessage());
+//        }
+//        return response;
+//    }
+
     @Override
-    public Response addNewComment(Long postId,Long userId, LocalDateTime createdAt, String content) {
-        Response response = new Response();
+    public Comment addNewComment(Long postId, Long userId, CommentRequest commentRequest) {
+        Post post = postRepository.findById(postId)
+                   .orElseThrow(() -> new CustomMessageException("Post not found"));
+        User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new CustomMessageException("User not found"));
 
-        try {
-            Post post = postRepository.findById(postId)
-                    .orElseThrow(() -> new OurException("Post not found"));
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new OurException("User not found"));
-            Comment comment = new Comment();
-            comment.setContent(content);
-            comment.setCreatedAt(createdAt);
-            comment.setPost(post);
-            comment.setUser(user);
+        Comment comment = new Comment();
+        comment.setContent(commentRequest.getContent());
+        comment.setPost(post);
+        comment.setUser(user);
 
-            Comment savedComment = commentRepository.save(comment);
-            CommentDTO commentDTO = Utils.mapCommentEntityToCommentDTO(savedComment, false, true);
-            response.setStatusCode(200);
-            response.setMessage("successful");
-            response.setComment(commentDTO);
-
-        } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setMessage("Error saving a comment " + e.getMessage());
-        }
-        return response;
+        return commentRepository.save(comment);
     }
 
     @Override
@@ -99,32 +117,40 @@ public class CommentService implements ICommentService {
     }
 
     @Override
-    public Response updateComment(Long CommentId, String content) {
-        Response response = new Response();
-
-        try {
-
-            Comment comment = commentRepository.findById(CommentId).orElseThrow(() -> new OurException("Room Not Found"));
-
-            if (content != null) comment.setContent(content);
-
-
-            Comment updatedComment = commentRepository.save(comment);
-            CommentDTO commentDTO = Utils.mapCommentEntityToCommentDTO(updatedComment, false,false);
-
-            response.setStatusCode(200);
-            response.setMessage("successful");
-            response.setComment(commentDTO);
-
-        } catch (OurException e) {
-            response.setStatusCode(404);
-            response.setMessage(e.getMessage());
-        } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setMessage("Error saving a room " + e.getMessage());
-        }
-        return response;
+    public Optional<Comment> updateComment(Long CommentId, CommentRequest commentRequest) {
+        Comment comment = commentRepository.findById(CommentId).orElseThrow(() -> new CustomMessageException("Comment" +
+                " Not Found"));
+        comment.setContent(commentRequest.getContent());
+        return Optional.of(commentRepository.save(comment));
     }
+
+//    @Override
+//    public Response updateComment(Long CommentId, String content) {
+//        Response response = new Response();
+//
+//        try {
+//
+//            Comment comment = commentRepository.findById(CommentId).orElseThrow(() -> new OurException("Room Not Found"));
+//
+//            if (content != null) comment.setContent(content);
+//
+//
+//            Comment updatedComment = commentRepository.save(comment);
+//            CommentDTO commentDTO = Utils.mapCommentEntityToCommentDTO(updatedComment, false,false);
+//
+//            response.setStatusCode(200);
+//            response.setMessage("successful");
+//            response.setComment(commentDTO);
+//
+//        } catch (OurException e) {
+//            response.setStatusCode(404);
+//            response.setMessage(e.getMessage());
+//        } catch (Exception e) {
+//            response.setStatusCode(500);
+//            response.setMessage("Error saving a room " + e.getMessage());
+//        }
+//        return response;
+//    }
 
     @Override
     public Response getCommentById(Long CommentId) {
@@ -147,4 +173,5 @@ public class CommentService implements ICommentService {
         }
         return response;
     }
+
 }

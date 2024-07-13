@@ -22,7 +22,7 @@ public class UserResponse implements Serializable {
         }
         UserResponse response = new UserResponse();
         response.setId(user.getId());
-        response.setUsername(user.getUsername());
+        response.setUsername(user.getName());
         response.setEmail(user.getEmail());
         return response;
     }

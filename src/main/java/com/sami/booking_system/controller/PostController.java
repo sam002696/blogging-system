@@ -118,10 +118,6 @@ public class PostController {
     @ApiResponse(responseCode = "200", content = {
             @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponse.class))
     })
-//    public ResponseEntity<Response> getPostById(@PathVariable Long postId) {
-//        Response response = postService.getPostById(postId);
-//        return ResponseEntity.status(response.getStatusCode()).body(response);
-//    }
     public ResponseEntity<JSONObject> getPostById(@PathVariable Long postId) {
         Optional<Post> postOptional = postService.findById(postId);
 
@@ -147,7 +143,7 @@ public class PostController {
                 badRequest().body(error(HttpStatus.NOT_FOUND, "Post not found with id: " + postId).getJson()));
     }
 
-    @DeleteMapping("/delete/{roomId}")
+    @DeleteMapping("/delete/{postId}")
     @Operation(summary = "Delete a post", responses = {
             @ApiResponse(description = "Successfully deleted the post",
                     responseCode = "200",

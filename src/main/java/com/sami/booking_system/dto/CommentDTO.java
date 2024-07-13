@@ -21,7 +21,7 @@ public class CommentDTO {
         Comment comment = new Comment();
         comment.setId(id);
         comment.setContent(content);
-        comment.setCreatedAt(createdAt);
+//        comment.setCreatedAt(createdAt);
         if (user != null) {
             comment.setUser(user.to()); // Assuming UserDTO has a to() method to convert to User entity
         }

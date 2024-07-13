@@ -1,6 +1,6 @@
 package com.sami.booking_system.repository;
 
-import com.sami.booking_system.Projection.CommentProjection;
+import com.sami.booking_system.projection.CommentProjection;
 import com.sami.booking_system.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

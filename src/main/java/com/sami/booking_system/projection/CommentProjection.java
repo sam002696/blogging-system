@@ -1,4 +1,4 @@
-package com.sami.booking_system.Projection;
+package com.sami.booking_system.projection;
 
 public interface CommentProjection {
     String getContent();
