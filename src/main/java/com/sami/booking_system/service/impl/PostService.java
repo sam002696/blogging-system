@@ -7,18 +7,20 @@ import com.sami.booking_system.entity.Post;
 import com.sami.booking_system.entity.User;
 import com.sami.booking_system.exception.OurException;
 import com.sami.booking_system.exceptions.CustomMessageException;
+import com.sami.booking_system.projection.PostProjection;
 import com.sami.booking_system.repository.CommentRepository;
 import com.sami.booking_system.repository.PostRepository;
 import com.sami.booking_system.repository.UserRepository;
+import com.sami.booking_system.responses.CommentResponse;
+import com.sami.booking_system.responses.PostResponse;
+import com.sami.booking_system.responses.UserResponse;
 import com.sami.booking_system.service.interfaces.IPostService;
 import com.sami.booking_system.utils.ServiceHelper;
 import com.sami.booking_system.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PostService implements IPostService {
@@ -57,7 +59,7 @@ public class PostService implements IPostService {
 
     @Override
     public Post addPost(PostRequest postRequest, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomMessageException("User not found"));
 
         Post post = new Post();
         post.setTitle(postRequest.getTitle());
@@ -172,6 +174,47 @@ public class PostService implements IPostService {
     @Override
     public Optional<Post> findById(Long postId) {
         return postRepository.findById(postId);
+    }
+
+    @Override
+    public PostResponse getPostById(Long postId) {
+        List<PostProjection> projections = postRepository.findPostWithAuthorAndComments(postId);
+
+        if (projections == null || projections.isEmpty()) {
+            return null;
+        }
+
+        PostResponse response = new PostResponse();
+        response.setId(projections.getFirst().getPostId());
+        response.setTitle(projections.getFirst().getPostTitle());
+        response.setContent(projections.getFirst().getPostContent());
+
+        UserResponse author = new UserResponse();
+        author.setId(projections.getFirst().getAuthorId());
+        author.setUsername(projections.getFirst().getAuthorName());
+        response.setAuthor(author);
+
+        Map<Long, CommentResponse> commentMap = new HashMap<>();
+
+        for (PostProjection projection : projections) {
+            Long commentId = projection.getCommentId();
+            if (commentId != null) {
+                CommentResponse comment = commentMap.get(commentId);
+                if (comment == null) {
+                    comment = new CommentResponse();
+                    comment.setId(commentId);
+                    comment.setContent(projection.getCommentContent());
+                    UserResponse commenter = new UserResponse();
+                    commenter.setId(projection.getCommenterId());
+                    commenter.setUsername(projection.getCommenterName());
+                    comment.setUser(commenter);
+                    commentMap.put(commentId, comment);
+                }
+            }
+        }
+
+        response.setComments(new ArrayList<>(commentMap.values()));
+        return response;
     }
 
     @Override

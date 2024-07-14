@@ -119,11 +119,15 @@ public class PostController {
             @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponse.class))
     })
     public ResponseEntity<JSONObject> getPostById(@PathVariable Long postId) {
-        Optional<Post> postOptional = postService.findById(postId);
+//        Optional<Post> postOptional = postService.findById(postId);
+
+        PostResponse postResponse = postService.getPostById(postId);
+
+        return ok(success(postResponse).getJson());
 
 
-        return postOptional.map(value -> ok(success(select(value)).getJson())).orElseGet(() ->
-                badRequest().body(error(HttpStatus.NOT_FOUND, "Post not found with id: " + postId).getJson()));
+//        return postOptional.map(value -> ok(success(select(value)).getJson())).orElseGet(() ->
+//                badRequest().body(error(HttpStatus.NOT_FOUND, "Post not found with id: " + postId).getJson()));
 
     }
 

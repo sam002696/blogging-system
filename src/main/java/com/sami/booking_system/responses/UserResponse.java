@@ -14,7 +14,7 @@ public class UserResponse implements Serializable {
 
     private Long id;
     private String username;
-    private String email;
+//    private String email;
 
     public static UserResponse select(User user) {
         if (user == null) {
@@ -23,7 +23,7 @@ public class UserResponse implements Serializable {
         UserResponse response = new UserResponse();
         response.setId(user.getId());
         response.setUsername(user.getName());
-        response.setEmail(user.getEmail());
+//        response.setEmail(user.getEmail());
         return response;
     }
 }

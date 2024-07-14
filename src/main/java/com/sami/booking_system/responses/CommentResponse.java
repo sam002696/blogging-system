@@ -15,11 +15,8 @@ public class CommentResponse implements Serializable {
 
     private Long id;
     private String content;
-    private LocalDateTime createdAt;
     private UserResponse user;
 
-    // Remove the post field to prevent cyclic reference
-    // private PostResponse post;
 
     public static CommentResponse select(Comment comment) {
         CommentResponse response = new CommentResponse();
