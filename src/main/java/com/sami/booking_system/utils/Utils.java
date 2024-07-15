@@ -21,7 +21,7 @@ public class Utils {
         userDTO.setName(user.getName());
         userDTO.setEmail(user.getEmail());
         userDTO.setPhoneNumber(user.getPhoneNumber());
-        userDTO.setRole(user.getRole());
+        userDTO.setRole(String.valueOf(user.getRole()));
 
         if (includePost) {
             userDTO.setPosts(user.getPosts().stream()
@@ -99,7 +99,7 @@ public class Utils {
         userDTO.setName(user.getName());
         userDTO.setEmail(user.getEmail());
         userDTO.setPhoneNumber(user.getPhoneNumber());
-        userDTO.setRole(user.getRole());
+        userDTO.setRole(String.valueOf(user.getRole()));
 
         if (!user.getPosts().isEmpty()) {
             userDTO.setPosts(user.getPosts().stream().map(post -> mapPostEntityToPostDTOPlusComments(post)).collect(Collectors.toList()));

@@ -2,6 +2,7 @@ package com.sami.booking_system.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sami.booking_system.entity.User;
+import com.sami.booking_system.enums.RoleName;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class UserDTO {
         user.setEmail(email);
         user.setName(name);
         user.setPhoneNumber(phoneNumber);
-        user.setRole(role);
+        user.setRole(RoleName.valueOf(role));
         if (posts != null) {
             user.setPosts(posts.stream().map(PostDTO::to).collect(Collectors.toList())); // Assuming PostDTO has a to() method to convert to Post entity
         }
@@ -36,7 +37,7 @@ public class UserDTO {
         user.setEmail(email);
         user.setName(name);
         user.setPhoneNumber(phoneNumber);
-        user.setRole(role);
+        user.setRole(RoleName.valueOf(role));
         if (posts != null) {
             user.setPosts(posts.stream().map(PostDTO::to).collect(Collectors.toList())); // Assuming PostDTO has a to() method to convert to Post entity
         }

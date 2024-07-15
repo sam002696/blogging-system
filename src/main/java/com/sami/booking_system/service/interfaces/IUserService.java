@@ -4,11 +4,12 @@ import com.sami.booking_system.dto.LoginRequest;
 import com.sami.booking_system.dto.RegisterRequest;
 import com.sami.booking_system.dto.Response;
 import com.sami.booking_system.entity.User;
+import com.sami.booking_system.responses.LoginResponse;
 
 public interface IUserService {
     User register(RegisterRequest user);
 
-    Response login(LoginRequest loginRequest);
+    LoginResponse login(LoginRequest loginRequest);
 
     Response getAllUsers();
 

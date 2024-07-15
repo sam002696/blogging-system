@@ -2,6 +2,7 @@ package com.sami.booking_system.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sami.booking_system.enums.RoleName;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -33,10 +34,15 @@ public class User implements UserDetails {
     @NotBlank(message = "Phone Number is required")
     private String phoneNumber;
 
+    @OneToOne(mappedBy = "user")
+    private RefreshToken refreshToken;
+
     @NotBlank(message = "Password is required")
     private String password;
 
-    private String role;
+//    private String role;
+    @Enumerated(EnumType.STRING)
+    private RoleName role;
 
 
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -46,7 +52,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

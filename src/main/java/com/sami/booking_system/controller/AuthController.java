@@ -3,6 +3,7 @@ package com.sami.booking_system.controller;
 import com.sami.booking_system.dto.*;
 import com.sami.booking_system.entity.Post;
 import com.sami.booking_system.entity.User;
+import com.sami.booking_system.responses.LoginResponse;
 import com.sami.booking_system.service.interfaces.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,7 +25,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @Tag(name = "Auth API")
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     @Autowired
@@ -53,10 +54,10 @@ public class AuthController {
             @ApiResponse(description = "Successfully logged in",
                     responseCode = "200",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserDTO.class)))
+                            schema = @Schema(implementation = LoginRequest.class)))
     })
-    public ResponseEntity<Response> login(@RequestBody LoginRequest loginRequest) {
-        Response response = userService.login(loginRequest);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
+    public ResponseEntity<JSONObject> login(@RequestBody LoginRequest loginRequest) {
+        LoginResponse response = userService.login(loginRequest);
+        return ok(success(response, "Logged in successfully").getJson());
     }
 }

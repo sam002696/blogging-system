@@ -5,11 +5,14 @@ import com.sami.booking_system.dto.RegisterRequest;
 import com.sami.booking_system.dto.Response;
 import com.sami.booking_system.dto.UserDTO;
 import com.sami.booking_system.entity.User;
+import com.sami.booking_system.enums.RoleName;
 import com.sami.booking_system.exception.OurException;
 import com.sami.booking_system.exceptions.CustomMessageException;
 import com.sami.booking_system.repository.UserRepository;
+import com.sami.booking_system.responses.LoginResponse;
 import com.sami.booking_system.service.interfaces.IUserService;
 //import com.sami.booking_system.utils.JwtService;
+import com.sami.booking_system.utils.JWTUtils;
 import com.sami.booking_system.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,8 +29,8 @@ public class UserService implements IUserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-//    @Autowired
-//    private JwtService jwtUtils;
+    @Autowired
+    private JWTUtils jwtUtils;
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -71,7 +74,7 @@ public class UserService implements IUserService {
 
         user.setEmail(reqUser.getEmail());
         user.setName(reqUser.getName());
-        user.setRole(reqUser.getRole());
+        user.setRole(RoleName.valueOf(reqUser.getRole()));
         user.setPassword(reqUser.getPassword());
         user.setPhoneNumber(reqUser.getPhoneNumber());
 
@@ -80,31 +83,49 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Response login(LoginRequest loginRequest) {
-        Response response = new Response();
+    public LoginResponse login(LoginRequest loginRequest) {
+        LoginResponse loginResponse = new LoginResponse();
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+            var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new CustomMessageException("user Not found"));
 
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-            var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new OurException("user Not found"));
+            var token = jwtUtils.generateToken(user);
+            loginResponse.setId(user.getId());
+            loginResponse.setUsername(user.getUsername());
+            loginResponse.setEmail(user.getEmail());
+            loginResponse.setRole(String.valueOf(user.getRole()));
+            loginResponse.setAccessToken(token);
+            loginResponse.setExpirationTime("7 days");
 
-//            var token = jwtUtils.generateToken(user);
-            response.setStatusCode(200);
-//            response.setToken(token);
-            response.setRole(user.getRole());
-            response.setExpirationTime("7 Days");
-            response.setMessage("successful");
+            return loginResponse;
 
-        } catch (OurException e) {
-            response.setStatusCode(404);
-            response.setMessage(e.getMessage());
-
-        } catch (Exception e) {
-
-            response.setStatusCode(500);
-            response.setMessage("Error Occurred During USer Login " + e.getMessage());
-        }
-        return response;
     }
+
+//    @Override
+//    public Response login(LoginRequest loginRequest) {
+//        Response response = new Response();
+//
+//        try {
+//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+//            var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new CustomMessageException("user Not found"));
+//
+//            var token = jwtUtils.generateToken(user);
+//            response.setStatusCode(200);
+//            response.setToken(token);
+//            response.setRole(String.valueOf(user.getRole()));
+//            response.setExpirationTime("7 Days");
+//            response.setMessage("successful");
+//
+//        } catch (OurException e) {
+//            response.setStatusCode(404);
+//            response.setMessage(e.getMessage());
+//
+//        } catch (Exception e) {
+//
+//            response.setStatusCode(500);
+//            response.setMessage("Error Occurred During USer Login " + e.getMessage());
+//        }
+//        return response;
+//    }
 
     @Override
     public Response getAllUsers() {
