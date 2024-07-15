@@ -9,7 +9,7 @@ import com.sami.booking_system.exception.OurException;
 import com.sami.booking_system.exceptions.CustomMessageException;
 import com.sami.booking_system.repository.UserRepository;
 import com.sami.booking_system.service.interfaces.IUserService;
-import com.sami.booking_system.utils.JWTUtils;
+//import com.sami.booking_system.utils.JwtService;
 import com.sami.booking_system.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,8 +26,8 @@ public class UserService implements IUserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    private JWTUtils jwtUtils;
+//    @Autowired
+//    private JwtService jwtUtils;
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -87,9 +87,9 @@ public class UserService implements IUserService {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
             var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new OurException("user Not found"));
 
-            var token = jwtUtils.generateToken(user);
+//            var token = jwtUtils.generateToken(user);
             response.setStatusCode(200);
-            response.setToken(token);
+//            response.setToken(token);
             response.setRole(user.getRole());
             response.setExpirationTime("7 Days");
             response.setMessage("successful");

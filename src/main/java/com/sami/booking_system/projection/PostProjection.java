@@ -1,8 +1,5 @@
 package com.sami.booking_system.projection;
 
-
-
-
 public interface PostProjection {
     Long getPostId();
     String getPostTitle();
