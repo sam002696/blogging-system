@@ -3,6 +3,7 @@ package com.sami.booking_system.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +20,13 @@ public class JWTUtils {
 
     private static final long EXPIRATION_TIME = 1000 * 60 * 24 * 7; //for 7 days
 
-    private final SecretKey Key;
+//    private final SecretKey Key;
+    private final SecretKey key;
 
     public JWTUtils() {
-        String secreteString = "843567893696976453275974432697R634976R738467TR678T34865R6834R8763T478378637664538745673865783678548735687R3";
-        byte[] keyBytes = Base64.getDecoder().decode(secreteString.getBytes(StandardCharsets.UTF_8));
-        this.Key = new SecretKeySpec(keyBytes, "HmacSHA256");
-
+        String secretString = "843567893696976453275974432697R634976R738467TR678T34865R6834R8763T478378637664538745673865783678548735687R3";
+        byte[] keyBytes = Base64.getDecoder().decode(secretString.getBytes(StandardCharsets.UTF_8));
+        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String generateToken(UserDetails userDetails) {
@@ -33,7 +34,7 @@ public class JWTUtils {
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(Key)
+                .signWith(key)
                 .compact();
     }
 
@@ -42,7 +43,7 @@ public class JWTUtils {
     }
 
     private <T> T extractClaims(String token, Function<Claims, T> claimsTFunction) {
-        return claimsTFunction.apply(Jwts.parser().verifyWith(Key).build().parseSignedClaims(token).getPayload());
+        return claimsTFunction.apply(Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload());
     }
 
     public boolean isValidToken(String token, UserDetails userDetails) {

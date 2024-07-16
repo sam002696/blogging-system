@@ -181,7 +181,7 @@ public class PostService implements IPostService {
         List<PostProjection> projections = postRepository.findPostWithAuthorAndComments(postId);
 
         if (projections == null || projections.isEmpty()) {
-            return null;
+            throw new CustomMessageException("Post not found");
         }
 
         PostResponse response = new PostResponse();
