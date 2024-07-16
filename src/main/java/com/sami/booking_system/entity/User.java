@@ -45,6 +45,10 @@ public class User implements UserDetails {
     private RoleName role;
 
 
+    @OneToOne(mappedBy = "user")
+    private ForgotPassword forgotPassword;
+
+
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Post> posts;
