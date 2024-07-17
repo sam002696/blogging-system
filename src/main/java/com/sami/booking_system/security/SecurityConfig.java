@@ -30,7 +30,7 @@ public class SecurityConfig {
 
     private static final String[] PUBLIC_MATCHER = {
             "/api/v1/auth/**",
-            "/forgotPassword/**",
+            "/api/v1/forgotPassword/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger-resources/**",
