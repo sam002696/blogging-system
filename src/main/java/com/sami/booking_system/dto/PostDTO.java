@@ -1,12 +1,8 @@
 package com.sami.booking_system.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sami.booking_system.entity.Post;
-import com.sami.booking_system.entity.User;
 import lombok.Data;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,9 +13,7 @@ public class PostDTO {
     private Long id;
     private String title;
     private String content;
-//    @JsonIgnore
     private UserDTO author;
-//    @JsonIgnore
     private List<CommentDTO> comments;
 
     public Post to() {
@@ -27,7 +21,7 @@ public class PostDTO {
         post.setTitle(title);
         post.setContent(content);
         if (author != null) {
-            post.setAuthor(author.to()); // Assuming UserDTO has a to() method to convert to User entity
+            post.setAuthor(author.to());
         }
         if (comments != null) {
             post.setComments(comments.stream().map(CommentDTO::to).collect(Collectors.toList())); // Assuming CommentDTO has a to() method to convert to Comment entity
@@ -39,7 +33,7 @@ public class PostDTO {
         post.setTitle(title);
         post.setContent(content);
         if (author != null) {
-            post.setAuthor(author.to()); // Assuming UserDTO has a to() method to convert to User entity
+            post.setAuthor(author.to());
         }
         if (comments != null) {
             post.setComments(comments.stream().map(CommentDTO::to).collect(Collectors.toList())); // Assuming CommentDTO has a to() method to convert to Comment entity
