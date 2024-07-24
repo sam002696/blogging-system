@@ -4,6 +4,7 @@ import com.sami.booking_system.dto.LoginRequest;
 import com.sami.booking_system.dto.RegisterRequest;
 import com.sami.booking_system.dto.Response;
 import com.sami.booking_system.dto.UserDTO;
+import com.sami.booking_system.entity.Post;
 import com.sami.booking_system.entity.User;
 import com.sami.booking_system.enums.RoleName;
 import com.sami.booking_system.exception.OurException;
@@ -13,6 +14,7 @@ import com.sami.booking_system.responses.LoginResponse;
 import com.sami.booking_system.service.interfaces.IUserService;
 //import com.sami.booking_system.utils.JwtService;
 import com.sami.booking_system.utils.JWTUtils;
+import com.sami.booking_system.utils.ServiceHelper;
 import com.sami.booking_system.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
@@ -94,7 +98,7 @@ public class UserService implements IUserService {
             loginResponse.setEmail(user.getEmail());
             loginResponse.setRole(String.valueOf(user.getRole()));
             loginResponse.setAccessToken(token);
-            loginResponse.setExpirationTime("7 days");
+            loginResponse.setExpirationTime("6 days");
 
             return loginResponse;
 
@@ -167,25 +171,49 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Response getMyInfo(String email) {
-        Response response = new Response();
+    public UserDTO getMyInfo(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomMessageException("User Not Found"));
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setName(user.getName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setPhoneNumber(user.getPhoneNumber());
+        userDTO.setRole(String.valueOf(user.getRole()));
+        userDTO.setPosts(user.getPosts().stream()
+                .map(Utils::mapPostEntityToPostDTOPlusComments)
+                .collect(Collectors.toList()));
 
-        try {
-            User user = userRepository.findByEmail(email).orElseThrow(() -> new OurException("User Not Found"));
-            UserDTO userDTO = Utils.mapUserEntityToUserDTO(user, true);
-            response.setStatusCode(200);
-            response.setMessage("successful");
-            response.setUser(userDTO);
-
-        } catch (OurException e) {
-            response.setStatusCode(404);
-            response.setMessage(e.getMessage());
-
-        } catch (Exception e) {
-
-            response.setStatusCode(500);
-            response.setMessage("Error getting the user " + e.getMessage());
-        }
-        return response;
+        return userDTO;
     }
+
+    @Override
+    public Map<String, Object> search(Integer page, Integer size, String sortBy, String search) {
+        ServiceHelper<User> serviceHelper = new ServiceHelper<>(User.class);
+        return serviceHelper.getList(
+                userRepository.search(search, serviceHelper.getPageable(sortBy, page, size)),
+                page, size);
+    }
+
+//    @Override
+//    public Response getMyInfo(String email) {
+//        Response response = new Response();
+//
+//        try {
+//            User user = userRepository.findByEmail(email).orElseThrow(() -> new OurException("User Not Found"));
+//            UserDTO userDTO = Utils.mapUserEntityToUserDTO(user, true);
+//            response.setStatusCode(200);
+//            response.setMessage("successful");
+//            response.setUser(userDTO);
+//
+//        } catch (OurException e) {
+//            response.setStatusCode(404);
+//            response.setMessage(e.getMessage());
+//
+//        } catch (Exception e) {
+//
+//            response.setStatusCode(500);
+//            response.setMessage("Error getting the user " + e.getMessage());
+//        }
+//        return response;
+//    }
 }

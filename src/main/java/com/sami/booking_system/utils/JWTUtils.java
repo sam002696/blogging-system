@@ -28,12 +28,13 @@ public class JWTUtils {
         byte[] keyBytes = Base64.getDecoder().decode(secretString.getBytes(StandardCharsets.UTF_8));
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
-
+    Date now = new Date();
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+//                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .expiration(new Date(now.getTime() + 604800000))
                 .signWith(key)
                 .compact();
     }

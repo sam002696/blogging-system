@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "comments")
-public class Comment {
+public class Comment extends BaseEntity {
 
 
 

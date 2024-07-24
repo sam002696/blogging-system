@@ -27,6 +27,14 @@ spring:
           starttls:
             enable: true
 
+  servlet:
+    multipart:
+      enabled: true
+      location: /tmp
+      max-file-size: 512MB
+      max-request-size: 512MB
+      resolve-lazily: false
+
   cloudinary:
     cloud_name: dvqolnmnp
     api_key: 585679249344257

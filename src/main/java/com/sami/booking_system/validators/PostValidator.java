@@ -1,6 +1,7 @@
 package com.sami.booking_system.validators;
 
 import com.sami.booking_system.dto.PostDTO;
+import com.sami.booking_system.dto.PostRequest;
 import com.sami.booking_system.exceptions.CustomMessageException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,12 +15,12 @@ public class PostValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return PostDTO.class.isAssignableFrom(clazz);
+        return PostRequest.class.isAssignableFrom(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        PostDTO dto = (PostDTO) target;
+        PostRequest dto = (PostRequest) target;
 
         if (dto.getTitle() == null || dto.getTitle().isBlank()) {
             throw new CustomMessageException("Title is required");

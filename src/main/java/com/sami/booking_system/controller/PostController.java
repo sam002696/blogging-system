@@ -64,9 +64,12 @@ public class PostController {
             @Valid @RequestBody PostRequest postRequest,
             BindingResult bindingResult
     ) {
-        if (bindingResult.hasErrors()) {
-            return badRequest().body(error(fieldError(bindingResult), "Validation Error").getJson());
-        }
+
+        ValidationUtils.invokeValidator(postValidator, postRequest, bindingResult);
+
+//        if (bindingResult.hasErrors()) {
+//            return badRequest().body(error(fieldError(bindingResult), "Validation Error").getJson());
+//        }
 
         Post post = postService.addPost(postRequest, userId);
 

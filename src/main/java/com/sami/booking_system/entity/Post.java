@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "posts")
-public class Post {
+public class Post extends BaseEntity{
 
 
     @Id
