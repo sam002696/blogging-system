@@ -14,10 +14,12 @@ import com.sami.booking_system.repository.UserRepository;
 import com.sami.booking_system.responses.CommentResponse;
 import com.sami.booking_system.responses.PostResponse;
 import com.sami.booking_system.responses.UserResponse;
+import com.sami.booking_system.security.UserPrincipal;
 import com.sami.booking_system.service.interfaces.IPostService;
 import com.sami.booking_system.utils.ServiceHelper;
 import com.sami.booking_system.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -116,9 +118,23 @@ public class PostService implements IPostService {
     @Override
     public Optional<Post> updatePost(Long postId, PostRequest postRequest) {
 
+
+        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long loggedInUserId = userPrincipal.getId();
+
+
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomMessageException("Post Not Found"));
+
+
+        if (!post.getAuthor().getId().equals(loggedInUserId)) {
+            throw new CustomMessageException("You are not authorized to update this post");
+        }
+
+
         post.setTitle(postRequest.getTitle());
         post.setContent(postRequest.getContent());
+
+
         return Optional.of(postRepository.save(post));
     }
 

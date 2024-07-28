@@ -124,6 +124,7 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<mainClass>com.sami.booking_system.BookingSystemApplication</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -35,10 +35,7 @@ spring:
       max-request-size: 512MB
       resolve-lazily: false
 
-  cloudinary:
-    cloud_name: dvqolnmnp
-    api_key: 585679249344257
-    api_secret: sc-90kE8RbhkFZHyAUmbj8C7N8c
+
 
 server:
-  port: 8600
+  port: 8800

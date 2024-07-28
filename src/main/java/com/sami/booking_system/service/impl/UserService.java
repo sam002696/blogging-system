@@ -11,9 +11,12 @@ import com.sami.booking_system.exception.OurException;
 import com.sami.booking_system.exceptions.CustomMessageException;
 import com.sami.booking_system.repository.UserRepository;
 import com.sami.booking_system.responses.LoginResponse;
+import com.sami.booking_system.security.UserPrincipal;
+import com.sami.booking_system.service.CustomUserDetailsService;
 import com.sami.booking_system.service.interfaces.IUserService;
 //import com.sami.booking_system.utils.JwtService;
 import com.sami.booking_system.utils.JWTUtils;
+import org.springframework.security.core.GrantedAuthority;
 import com.sami.booking_system.utils.ServiceHelper;
 import com.sami.booking_system.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +40,9 @@ public class UserService implements IUserService {
     private JWTUtils jwtUtils;
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
 
 
 //    @Override
@@ -90,13 +96,20 @@ public class UserService implements IUserService {
     public LoginResponse login(LoginRequest loginRequest) {
         LoginResponse loginResponse = new LoginResponse();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-            var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new CustomMessageException("user Not found"));
+        var user = userDetailsService.loadUserByUsername(loginRequest.getEmail());
+        var token = jwtUtils.generateToken(user);
 
-            var token = jwtUtils.generateToken(user);
-            loginResponse.setId(user.getId());
-            loginResponse.setUsername(user.getUsername());
-            loginResponse.setEmail(user.getEmail());
-            loginResponse.setRole(String.valueOf(user.getRole()));
+        UserPrincipal userPrincipal = (UserPrincipal) user;
+
+        String role = userPrincipal.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElse("");
+
+            loginResponse.setId(userPrincipal.getId());
+            loginResponse.setUsername(userPrincipal.getName());
+            loginResponse.setEmail(userPrincipal.getEmail());
+            loginResponse.setRole(role);
             loginResponse.setAccessToken(token);
             loginResponse.setExpirationTime("6 days");
 
