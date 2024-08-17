@@ -1,16 +1,17 @@
 package com.sami.booking_system.entity.LightEngineeringQuestionnaire;
 
+import com.sami.booking_system.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "light_engineering_questions")
-public class Questionnaire {
+public class Questionnaire extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String title;
     private String conductedBy;
