@@ -16,7 +16,7 @@ public class MachineUsedDTO {
         private String machineAccuracy;
         private String machineUsageTime;
         private String machineAgeType;
-        private int machineYearUsage;
+        private String machineYearUsage;
         private String machineOthers;
     }
 }

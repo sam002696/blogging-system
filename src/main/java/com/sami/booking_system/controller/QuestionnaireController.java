@@ -17,7 +17,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @Tag(name = "Questionnaire API")
-@RequestMapping("/api/questionnaires")
+@RequestMapping("/api/v1/questionnaire")
 public class QuestionnaireController {
 
     @Autowired

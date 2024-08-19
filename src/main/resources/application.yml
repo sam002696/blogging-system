@@ -35,6 +35,11 @@ spring:
       max-request-size: 512MB
       resolve-lazily: false
 
+  mvc:
+    log-resolved-exception: true
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
 
 
 server:

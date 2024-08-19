@@ -18,8 +18,4 @@ public interface QuestionnaireMapper {
 
     QuestionnaireDTO toDTO(Questionnaire questionnaire);
 
-//    // Define mapping methods for the nested lists
-//    List<SafetyRelations> map(List<SafetyRelationsDTO> safetyRelationsDTOList);
-//
-//    SafetyRelations map(SafetyRelationsDTO safetyRelationsDTO);
 }
