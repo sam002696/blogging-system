@@ -7,6 +7,7 @@ import com.sami.booking_system.entity.LightEngineeringQuestionnaire.Questionnair
 import com.sami.booking_system.entity.LightEngineeringQuestionnaire.SafetyRelations;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
@@ -17,5 +18,8 @@ public interface QuestionnaireMapper {
     Questionnaire toEntity(QuestionnaireDTO questionnaireDTO);
 
     QuestionnaireDTO toDTO(Questionnaire questionnaire);
+
+    @Mapping(target = "id", ignore = true) // Ignoring ID during update
+    void toEntity(QuestionnaireDTO questionnaireDTO, @MappingTarget Questionnaire questionnaire);
 
 }
