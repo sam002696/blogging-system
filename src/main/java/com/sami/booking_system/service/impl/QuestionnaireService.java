@@ -53,4 +53,11 @@ public class QuestionnaireService implements IQuestionnaireService {
     public Response deleteQuestionnaire(Long CommentId) {
         return null;
     }
+
+    @Override
+    public void deleteQuestionnaireById(Integer id) {
+        Questionnaire questionnaire = questionnaireRepository.findById(id)
+                .orElseThrow(() -> new CustomMessageException("Questionnaire not found with" + id));
+        questionnaireRepository.delete(questionnaire);
+    }
 }

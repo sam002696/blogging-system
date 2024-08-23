@@ -74,5 +74,21 @@ public class QuestionnaireController {
     }
 
 
+    // delete a questionnaire
+
+
+    @DeleteMapping("/delete/{id}")
+    @Operation(summary = "Delete a questionnaire", responses = {
+            @ApiResponse(description = "Successfully deleted the questionnaire",
+                    responseCode = "200"),
+            @ApiResponse(description = "Questionnaire not found", responseCode = "404")
+    })
+    public ResponseEntity<JSONObject> deleteQuestionnaire(@PathVariable Integer id) {
+
+            questionnaireService.deleteQuestionnaireById(id);
+            return ok(success(null, "Questionnaire deleted successfully!").getJson());
+
+    }
+
 
 }

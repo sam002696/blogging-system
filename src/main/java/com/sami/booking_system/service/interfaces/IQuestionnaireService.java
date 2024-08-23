@@ -15,4 +15,6 @@ public interface IQuestionnaireService {
     Optional<QuestionnaireDTO> updateQuestionnaire(Integer id, QuestionnaireDTO questionnaireDTO);
 
     Response deleteQuestionnaire(Long CommentId);
+
+    void deleteQuestionnaireById(Integer id);
 }
