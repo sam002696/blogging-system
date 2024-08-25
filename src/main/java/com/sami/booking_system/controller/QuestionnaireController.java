@@ -6,10 +6,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.ResponseEntity.badRequest;
@@ -90,5 +93,25 @@ public class QuestionnaireController {
 
     }
 
+    // questionnaire pdf download
+
+    @GetMapping("/pdf-download/{id}")
+    @Operation(summary = "Generate Light Engineering Report", description = "Generates a PDF report for the specified Light Engineering Document")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Report generated successfully",
+                    content = @Content(mediaType = "application/pdf",
+                            schema = @Schema(type = "string", format = "binary"))),
+            @ApiResponse(responseCode = "404", description = "Document not found"),
+            @ApiResponse(responseCode = "500", description = "Error generating report")
+    })
+    public ResponseEntity<byte[]> generateReport(@PathVariable Integer id) {
+        byte[] pdfReport = questionnaireService.generateReport(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "document_report.pdf");
+
+        return new ResponseEntity<>(pdfReport, headers, HttpStatus.OK);
+    }
 
 }

@@ -17,4 +17,7 @@ public interface IQuestionnaireService {
     Response deleteQuestionnaire(Long CommentId);
 
     void deleteQuestionnaireById(Integer id);
+
+    // pdf download
+    byte[] generateReport(Integer id);
 }
