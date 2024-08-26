@@ -96,13 +96,19 @@ public class QuestionnaireController {
     // questionnaire pdf download
 
     @GetMapping("/pdf-download/{id}")
-    @Operation(summary = "Generate Light Engineering Report", description = "Generates a PDF report for the specified Light Engineering Document")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Report generated successfully",
+//    @Operation(summary = "Generate Light Engineering Report", description = "Generates a PDF report for the specified Light Engineering Document")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Report generated successfully",
+//                    content = @Content(mediaType = "application/pdf",
+//                            schema = @Schema(type = "string", format = "binary"))),
+//            @ApiResponse(responseCode = "404", description = "Document not found"),
+//            @ApiResponse(responseCode = "500", description = "Error generating report")
+//    })
+    @Operation(summary = "Generate Light Engineering Report", responses = {
+            @ApiResponse(description = "Report generated successfully",
+                    responseCode = "200",
                     content = @Content(mediaType = "application/pdf",
-                            schema = @Schema(type = "string", format = "binary"))),
-            @ApiResponse(responseCode = "404", description = "Document not found"),
-            @ApiResponse(responseCode = "500", description = "Error generating report")
+                            schema = @Schema(type = "string", format = "binary")))
     })
     public ResponseEntity<byte[]> generateReport(@PathVariable Integer id) {
         byte[] pdfReport = questionnaireService.generateReport(id);
