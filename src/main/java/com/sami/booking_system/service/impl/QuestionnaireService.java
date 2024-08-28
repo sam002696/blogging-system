@@ -8,6 +8,7 @@ import com.sami.booking_system.exceptions.CustomMessageException;
 import com.sami.booking_system.mapper.QuestionnaireMapper;
 import com.sami.booking_system.repository.QuestionnaireRepository;
 import com.sami.booking_system.service.interfaces.IQuestionnaireService;
+import com.sami.booking_system.utils.ServiceHelper;
 import net.sf.jasperreports.engine.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +68,14 @@ public class QuestionnaireService implements IQuestionnaireService {
         Questionnaire questionnaire = questionnaireRepository.findById(id)
                 .orElseThrow(() -> new CustomMessageException("Questionnaire not found with" + id));
         questionnaireRepository.delete(questionnaire);
+    }
+
+    @Override
+    public Map<String, Object> search(Integer page, Integer size, String sortBy, String search) {
+        ServiceHelper<Questionnaire> serviceHelper = new ServiceHelper<>(Questionnaire.class);
+        return serviceHelper.getList(
+                questionnaireRepository.search(search, serviceHelper.getPageable(sortBy, page, size)),
+                page, size);
     }
 
 

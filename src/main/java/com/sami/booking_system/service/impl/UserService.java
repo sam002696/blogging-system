@@ -96,7 +96,7 @@ public class UserService implements IUserService {
     public LoginResponse login(LoginRequest loginRequest) {
         LoginResponse loginResponse = new LoginResponse();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-        var user = userDetailsService.loadUserByUsername(loginRequest.getEmail());
+        var user = userDetailsService.loadUserByUsernameAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
         var token = jwtUtils.generateToken(user);
 
         UserPrincipal userPrincipal = (UserPrincipal) user;

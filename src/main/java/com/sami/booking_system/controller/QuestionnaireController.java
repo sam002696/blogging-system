@@ -1,7 +1,13 @@
 package com.sami.booking_system.controller;
 
 import com.sami.booking_system.dto.Questionnaire.QuestionnaireDTO;
+import com.sami.booking_system.entity.LightEngineeringQuestionnaire.Questionnaire;
+import com.sami.booking_system.entity.Post;
+import com.sami.booking_system.helpers.CommonDataHelper;
+import com.sami.booking_system.responses.PostResponse;
+import com.sami.booking_system.responses.QuestionnaireResponse;
 import com.sami.booking_system.service.impl.QuestionnaireService;
+import com.sami.booking_system.utils.PaginatedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.ResponseEntity.badRequest;
 import static com.sami.booking_system.utils.ResponseBuilder.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.sami.booking_system.utils.ResponseBuilder.success;
@@ -30,6 +38,9 @@ public class QuestionnaireController {
 
     @Autowired
     private QuestionnaireService questionnaireService;
+
+    @Autowired
+    private CommonDataHelper commonDataHelper;
 
     @PostMapping("/add")
     @Operation(summary = "Add a questionnaire", responses = {
@@ -119,5 +130,28 @@ public class QuestionnaireController {
 
         return new ResponseEntity<>(pdfReport, headers, HttpStatus.OK);
     }
+
+    // paginated response for all questionnaires
+
+    @GetMapping("/list")
+    @Operation(summary = "show lists of all questionnaires", description = "show lists of all questionnaire")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionnaireResponse.class))
+    })
+    public ResponseEntity<JSONObject> lists(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                            @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                            @RequestParam(value = "sortBy", defaultValue = "") String sortBy,
+                                            @RequestParam(value = "search", defaultValue = "") String search
+    ) {
+
+        PaginatedResponse response = new PaginatedResponse();
+        Map<String, Object> map = questionnaireService.search(page, size, sortBy, search);
+        List<Questionnaire> questionnaireList = (List<Questionnaire>) map.get("lists");
+        List<QuestionnaireResponse> responses = questionnaireList.stream().map(QuestionnaireResponse::select).toList();
+        commonDataHelper.getCommonData(page, size, map, response, responses);
+        return ok(paginatedSuccess(response).getJson());
+    }
+
+
 
 }
