@@ -95,7 +95,7 @@ public class UserService implements IUserService {
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
         LoginResponse loginResponse = new LoginResponse();
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+//        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
         var user = userDetailsService.loadUserByUsernameAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
         var token = jwtUtils.generateToken(user);
 

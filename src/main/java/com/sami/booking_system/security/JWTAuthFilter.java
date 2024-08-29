@@ -52,8 +52,8 @@ public class JWTAuthFilter extends OncePerRequestFilter {
             } else {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Token has expired, please log in again");
-                throw new CustomMessageException("Token has expired, please log in again");
-//                return;
+//                throw new CustomMessageException("Token has expired, please log in again");
+                return;
             }
         }
         filterChain.doFilter(request, response);
